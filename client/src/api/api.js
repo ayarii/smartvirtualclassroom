@@ -130,6 +130,11 @@ export const CommentsApi = {
       const { data } = await api.get(`class/` + idclass);
       return data;
     },
+    // class by level dashboard admin
+    async getclassByLevelAdmin(level) {
+      const { data } = await api.get(`getClassByLevel/` + level);
+      return data;
+    },
   };
   export const ClassInvitationApi = {
     async getClassInvitation(email) {
@@ -183,4 +188,18 @@ export const CommentsApi = {
       return data;
     },
   };
+//userData
+export const UserDataApi = {
+  async getUserdata() {
+    const { data } = await api.get(`http://localhost:5000/api/getalluserdata/`);
+    return data;
+  },
+};
+//userData
+export const RecomandationApi = {
+  async getRecomandationCourse(category) {
+    const { data } = await api.get(`http://localhost:5000/recomandation/recomandedcourse/${category}`);
+    return data;
+  },
+};
 export default api;

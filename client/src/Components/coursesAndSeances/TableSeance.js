@@ -1,10 +1,10 @@
-import React, {  useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ReactTimeAgo from "react-time-ago/commonjs/ReactTimeAgo";
 import {
   Card,
   Dropdown,
- 
+  Feed,
   Grid,
   Header,
   Image,
@@ -12,15 +12,15 @@ import {
 } from "semantic-ui-react";
 import {
   GetSeancesByIdClass,
-
+  RetrieveSeances,
 } from "../../redux/slices/Seance";
 import ModalConfirmDelete from "./ModalConfirmDelete";
 import ModalSeance from "./ModalSeance";
-
-import { Link  } from "react-router-dom";
+import { RetrieveCoursesByIdSeance } from "../../redux/slices/Courses";
+import { Link, BrowserRouter as Router } from "react-router-dom";
 import { isAuth } from "../../helpers/auth";
 
-function TableSeance() {
+function TableSeance(props) {
   const seances = useSelector((state) => state.seance.seance);
 
   const CurrentClass = JSON.parse(localStorage.getItem("idClass"));
@@ -86,7 +86,9 @@ function TableSeance() {
                                   buttonColor="black"
                                   icon="edit"
                                   seanceId={seance._id}
-                                
+                                  //onSeanceUpdated={props.onSeanceUpdated}
+                                  //server={props.server}
+                                  //socket={this.props.socket}
                                 />
 
                                 <ModalConfirmDelete
@@ -95,7 +97,9 @@ function TableSeance() {
                                   buttonColor="red"
                                   icon="trash"
                                   seance={seance}
-                                
+                                  // onSeanceDeleted={props.onSeanceDeleted}
+                                  //server={props.server}
+                                  //socket={props.socket}
                                 />
                               </Dropdown.Menu>
                             </Dropdown>

@@ -17,17 +17,20 @@ import ReactPlayer from "react-player/lazy";
 
 import { RetrieveCoursesByIdClass } from "../../redux/slices/Courses";
 
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import { isAuth } from "../../helpers/auth";
 
 function TableCourses() {
   const courses = useSelector((state) => state.courses.courses);
   const CurrentClass = JSON.parse(localStorage.getItem("idClass"));
-
+  const {id} = useParams();
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(RetrieveCoursesByIdClass(CurrentClass._id));
+    if(CurrentClass!==null)
+    dispatch(RetrieveCoursesByIdClass( CurrentClass._id));
+    else
+    dispatch(RetrieveCoursesByIdClass( id));
   }, []);
 
   const [activeIndex, setActiveIndex] = useState(0);
@@ -116,7 +119,7 @@ function TableCourses() {
                       </Accordion.Title>
 
                       <Accordion.Content active={activeIndex === index}>
-                        <Link to={"/detailCourses/" + c._id}>
+                        <Link to={ CurrentClass !== null ? "/detailCourses/" + c._id : "/detailsCoursesAdmin/"+ c._id }>
                           <Header
                             as="h3"
                             icon="file alternate outline"

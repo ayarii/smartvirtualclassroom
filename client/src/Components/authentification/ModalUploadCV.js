@@ -1,38 +1,44 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React from "react";
+import { useState } from "react";
 import Dropzone from "react-dropzone-uploader";
 import { useDispatch, useSelector } from "react-redux";
 import {
   Button,
   Dimmer,
   Header,
-  Image,
-  Loader,
   Modal,
+  Loader,
+  Segment,
 } from "semantic-ui-react";
 import { isAuth, setLocalStorage } from "../../helpers/auth";
+import { getUserDataById, UpdateProfilePicture, UpdateUserState, UploadResume } from "../../redux/slices/User";
 
-import { UpdateProfilePicture, UpdateUserState } from "../../redux/slices/User";
-
-function ModalChangeProfilePicture(props) {
- 
+function ModalUploadCV(props) {
+  const resume = useSelector((state) => state.user.resume);
   const Resources = useSelector((state) => state.user.Resources);
   const [loader, SetLoader] = useState(false);
 
   const [open, setOpen] = React.useState(false);
-  const [picture, setPicture] = React.useState("");
+  const [cv, setCV] = React.useState("");
   const dispatch = useDispatch();
 
-  const updatePicture = () => {
+  const uploadResume = () => {
+    
+  
+
     var formData = new FormData();
     SetLoader(true);
-    formData.append("multiple_resources", picture);
+    formData.append("multiple_resources", cv);
 
-    dispatch(UpdateProfilePicture(formData)).then((response) => {
+    dispatch(UploadResume(formData)).then((response) => {
 
-console.log(response);
+     
+      SetLoader(false);
+      setOpen(false);
+
       axios.put(
-        `${process.env.REACT_APP_API_URL}/api/user/updateProfile/${
+        `http://localhost:5000/api/user/updateProfile/${
           isAuth()._id
         }`,
         {
@@ -40,11 +46,11 @@ console.log(response);
           bio: props.bio,
           linkedInUrl: props.linkedIn,
           GithubUrl: props.github,
-          picture: response.payload,
+          picture: Resources,
           sexe: props.sexe,
           address: props.address,
           phone:props.phone,
-          cv: props.cv,
+          cv: response.payload,
           birthday: props.birthday,
         }
       )
@@ -52,6 +58,7 @@ console.log(response);
        
        // SetLoader(false);
         dispatch(UpdateUserState());
+        dispatch(getUserDataById(isAuth()._id));
         setLocalStorage("user", res.data.result);
         //setFormSuccessMessage("Your profile was updated successfully !");
        // SetFormClassName("success");
@@ -61,45 +68,27 @@ console.log(response);
       //  setFormSuccessMessage("Something went wrong !!");
        // SetFormClassName("warning");
       });
-      SetLoader(false);
-      setOpen(false);
+
     });
+ 
   };
   const handleChangeStatus = ({ meta, file }, status) => {
     if (status === "done") {
-      setPicture(file);
+      setCV(file);
     }
     if (status === "removed") {
       console.log(status, meta, file);
     }
   };
-
-  console.log(props.name);
   return (
     <div>
       <Modal
         onClose={() => setOpen(false)}
         onOpen={() => setOpen(true)}
         open={open}
-        trigger={
-          <Image
-            circular
-            fluid
-            size="small"
-
-
-            label={{
-              as: "a",
-              color: "red",
-              content: "Edit",
-              icon: "edit",
-              ribbon: true,
-            }}
-            src={Resources}
-          />
-        }
+        trigger={<Button attached="bottom" content="Upload your CV" />}
       >
-        <Modal.Header>Select a Photo</Modal.Header>
+        <Modal.Header>Select Your resume</Modal.Header>
 
         <Modal.Content>
           <Modal.Description>
@@ -121,9 +110,9 @@ console.log(response);
               onChangeStatus={handleChangeStatus}
               maxFiles={1}
               multiple={false}
-              accept="image/*"
+              accept="application/pdf"
               inputContent={(files, extra) =>
-                extra.reject ? "Image files only" : "Drag Files"
+                extra.reject ? "PDF files only" : "Drag Files"
               }
               styles={{
                 dropzoneReject: { borderColor: "red", backgroundColor: "#DAA" },
@@ -150,7 +139,7 @@ console.log(response);
             content="Yep, Save"
             labelPosition="right"
             icon="checkmark"
-            onClick={updatePicture}
+            onClick={()=>uploadResume()}
             color="red"
           />
         </Modal.Actions>
@@ -159,4 +148,4 @@ console.log(response);
   );
 }
 
-export default ModalChangeProfilePicture;
+export default ModalUploadCV;
