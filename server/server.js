@@ -1,6 +1,8 @@
 const express = require("express");
+
 const morgan = require("morgan");
 require("./config/db");
+const fs = require('fs');
 const bodyParser = require("body-parser");
 const SeanceController = require("./routes/SeanceController");
 const courses_route = require("./routes/Courses.route");
@@ -12,6 +14,7 @@ var questionRouter = require("./routes/question");
 var anwerRouter = require("./routes/answer");
 var CommentCourse = require("./routes/CommentCourse");
 var Notification = require("./routes/notification");
+var Recomanded = require("./routes/recomandation");
 
 //Hamza routes
 const ClassRouter = require("./routes/Class.js");
@@ -27,7 +30,7 @@ const path = require("path");
 
 app.use(express.static(path.join(__dirname, "public")));
 
-// if (process.env.NODE_ENV === "production") {
+//sdsdscds if (process.env.NODE_ENV === "production") {
 //   app.use(express.static(path.join(__dirname, "../client/build")));
 
 //   app.get("/*", function (req, res) {
@@ -75,6 +78,7 @@ app.use("/question", questionRouter);
 app.use("/answer", anwerRouter);
 app.use("/coursesComment", CommentCourse);
 app.use("/notification", Notification);
+app.use("/recomandation", Recomanded);
 
 //Hamza routes:
 app.use("/class", ClassRouter);
@@ -95,7 +99,7 @@ io.on("connection", (socket) => {
   });
   socket.on("disconnect", () => {
     socket.disconnect();
-    console.log("User disconnected!");
+    
   });
   //question
   socket.on("send_question", function (data) {
@@ -133,8 +137,6 @@ io.on("connection", (socket) => {
     // Socket Join RoomName
     socket.join(roomId);
     socketList[socket.id] = { userName, Image, video: true, audio: true };
-    const uu = { userId: socket.id, info: socketList[socket.id] };
-    socket.broadcast.to(roomId).emit("FE-user-join", uu);
     console.log(
       `this is the user ${userName} and this is the picture ${Image}`
     );
@@ -196,5 +198,8 @@ io.on("connection", (socket) => {
     io.emit("new-notification", data);
   });
 });
+
+
+  
 
 server.listen(port, () => console.log(`Listening on port ${port}`));

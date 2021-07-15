@@ -12,6 +12,7 @@ router = express.Router();
 const storages = new Storage({
   projectId: "smart-closer",
   keyFilename: "./smart-closer-firebase-adminsdk-75ops-25473d0d1e.json",
+  
 });
 
 // Create a bucket associated to Firebase storage bucket
